@@ -235,26 +235,45 @@ function autoScroll(id){
 
   if(el._scroll) cancelAnimationFrame(el._scroll);
 
-  let speed = 0.3; // bebas (0.3 – 1)
-  let pos = el.scrollTop; // 🔥 simpan posisi manual
+  let speed = 0.3;
+  let pos = el.scrollTop;
+  let isUserScrolling = false;
+  let scrollTimeout;
 
-  function loop(){
-    pos += speed;
-    el.scrollTop = pos;
+  function startAutoScroll(){
+    function loop(){
+      if(!isUserScrolling){
+        pos += speed;
+        el.scrollTop = pos;
 
-    el.style.transform = 'translateZ(0)';
+        el.style.transform = 'translateZ(0)';
 
-    if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
-      setTimeout(()=>{
-        pos = 0;
-        el.scrollTop = 0;
-      }, 1500);
+        if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
+          setTimeout(()=>{
+            pos = 0;
+            el.scrollTop = 0;
+          }, 1500);
+        }
+      }
+
+      el._scroll = requestAnimationFrame(loop);
     }
 
     el._scroll = requestAnimationFrame(loop);
   }
 
-  el._scroll = requestAnimationFrame(loop);
+  // 🔥 Deteksi user scroll (mouse / touch)
+  el.addEventListener("scroll", () => {
+    isUserScrolling = true;
+    pos = el.scrollTop; // update posisi terbaru user
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isUserScrolling = false; // lanjut auto scroll
+    }, 1500); // delay setelah user berhenti
+  });
+
+  startAutoScroll();
 }
 
 /* JAM REALTIME */
