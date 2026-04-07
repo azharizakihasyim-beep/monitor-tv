@@ -237,43 +237,46 @@ function autoScroll(id){
 
   let speed = 0.3;
   let pos = el.scrollTop;
+
   let isUserScrolling = false;
+  let isAutoScrolling = false; // 🔥 pembeda penting
   let scrollTimeout;
 
-  function startAutoScroll(){
-    function loop(){
-      if(!isUserScrolling){
-        pos += speed;
-        el.scrollTop = pos;
+  function loop(){
+    if(!isUserScrolling){
+      pos += speed;
 
-        el.style.transform = 'translateZ(0)';
+      isAutoScrolling = true; // tandai ini dari script
+      el.scrollTop = pos;
+      isAutoScrolling = false;
 
-        if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
-          setTimeout(()=>{
-            pos = 0;
-            el.scrollTop = 0;
-          }, 1500);
-        }
+      el.style.transform = 'translateZ(0)';
+
+      if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
+        setTimeout(()=>{
+          pos = 0;
+          el.scrollTop = 0;
+        }, 1500);
       }
-
-      el._scroll = requestAnimationFrame(loop);
     }
 
     el._scroll = requestAnimationFrame(loop);
   }
 
-  // 🔥 Deteksi user scroll (mouse / touch)
+  // 🔥 DETEKSI USER BENERAN (bukan dari script)
   el.addEventListener("scroll", () => {
+    if(isAutoScrolling) return; // ⛔ abaikan scroll dari script
+
     isUserScrolling = true;
-    pos = el.scrollTop; // update posisi terbaru user
+    pos = el.scrollTop;
 
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      isUserScrolling = false; // lanjut auto scroll
-    }, 1500); // delay setelah user berhenti
+      isUserScrolling = false;
+    }, 1500);
   });
 
-  startAutoScroll();
+  el._scroll = requestAnimationFrame(loop);
 }
 
 /* JAM REALTIME */
