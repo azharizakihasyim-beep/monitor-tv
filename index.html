@@ -233,24 +233,20 @@ loadData();
 function autoScroll(id){
   const el = document.getElementById("wrap"+id);
 
-  if(el._scroll) cancelAnimationFrame(el._scroll);
-
   let speed = 0.3;
   let pos = el.scrollTop;
 
   let isUserScrolling = false;
-  let isAutoScrolling = false; // 🔥 pembeda penting
+  let isAutoScrolling = false;
   let scrollTimeout;
 
   function loop(){
     if(!isUserScrolling){
       pos += speed;
 
-      isAutoScrolling = true; // tandai ini dari script
+      isAutoScrolling = true;
       el.scrollTop = pos;
       isAutoScrolling = false;
-
-      el.style.transform = 'translateZ(0)';
 
       if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
         setTimeout(()=>{
@@ -259,13 +255,14 @@ function autoScroll(id){
         }, 1500);
       }
     }
-
-    el._scroll = requestAnimationFrame(loop);
   }
 
-  // 🔥 DETEKSI USER BENERAN (bukan dari script)
+  // 🔥 Pakai setInterval biar HP aman
+  setInterval(loop, 16); // ~60fps
+
+  // 🔥 Deteksi user scroll
   el.addEventListener("scroll", () => {
-    if(isAutoScrolling) return; // ⛔ abaikan scroll dari script
+    if(isAutoScrolling) return;
 
     isUserScrolling = true;
     pos = el.scrollTop;
@@ -276,7 +273,10 @@ function autoScroll(id){
     }, 1500);
   });
 
-  el._scroll = requestAnimationFrame(loop);
+  // 🔥 WAJIB: trigger setelah user sentuh layar
+  document.addEventListener("touchstart", () => {
+    pos = el.scrollTop;
+  }, { once: true });
 }
 
 /* JAM REALTIME */
