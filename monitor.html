@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MONITOR OS TV</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f5f5f5;
+  color:#1f3a5f;
+  overflow:hidden;
+}
+
+/* HEADER ATAS */
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 20px;
+  background:white;
+  border-bottom:2px solid #ccc;
+}
+
+/* KIRI (LOGO + NOTE) */
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+.logo{
+  height:100px;
+}
+
+.note{
+  color:red;
+  font-weight:bold;
+  font-size:18px;
+}
+
+/* JAM */
+.clock{
+  font-size:20px;
+  font-weight:bold;
+}
+
+/* CONTAINER */
+.container{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  height:calc(100vh - 80px);
+}
+
+/* PANEL */
+.panel{
+  flex:1;
+  background:white;
+  border:2px solid #333;
+  display:flex;
+  flex-direction:column;
+}
+
+/* TITLE */
+.panel-title{
+  text-align:center;
+  font-weight:bold;
+  padding:10px;
+  font-size:16px;
+}
+
+/* SCROLL */
+.wrap{
+  flex:1;
+  overflow:auto;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+thead{
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+th, td{
+  border:1px solid #999;
+  padding:6px;
+  font-size:12px;
+}
+
+th{
+  color:white;
+  text-align:center;
+}
+
+.blue{ background:#5a79a8; }
+.red{ background:#d92c2c; }
+
+.center{ text-align:center; }
+.left{ text-align:left; }
+
+.os{
+  color:red;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header-top">
+  <div class="header-left">
+    <img src="HORIZONTAL.png" class="logo">
+    <div class="note">HANYA YANG MASIH OS SAJA YANG MUNCUL DI LAYAR</div>
+  </div>
+
+  <div class="clock" id="clock"></div>
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <div class="panel-title" id="title1"></div>
+    <div class="wrap" id="wrap1">
+      <table>
+        <thead id="head1"></thead>
+        <tbody id="data1"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title" id="title2"></div>
+    <div class="wrap" id="wrap2">
+      <table>
+        <thead id="head2"></thead>
+        <tbody id="data2"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title" id="title3"></div>
+    <div class="wrap" id="wrap3">
+      <table>
+        <thead id="head3"></thead>
+        <tbody id="data3"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyJStcyvPfvZa8-g8RyULzGrKy8O7uQ_qVvTQgaAI8SZZ1fdcj3OAzkY_K4ggT3m3r6/exec";
+
+/* HEADER TABLE */
+function header(){
+  return `
+  <tr>
+    <th rowspan="2" class="blue">NO</th>
+    <th rowspan="2" class="blue">NO PK</th>
+    <th rowspan="2" class="blue">JENIS PROSES</th>
+    <th colspan="2" class="blue">PLAN</th>
+    <th rowspan="2" class="blue">TARGET SPK</th>
+    <th rowspan="2" class="red">OS MARK</th>
+    <th rowspan="2" class="red">OS QTY</th>
+    <th rowspan="2" class="red">OS BERAT</th>
+  </tr>
+  <tr>
+    <th class="blue">MULAI</th>
+    <th class="blue">AKHIR</th>
+  </tr>`;
+}
+
+/* FORMAT ANGKA */
+function format(x){
+  if(!x) return "";
+  return Number(x).toLocaleString("id-ID");
+}
+
+/* RENDER */
+function render(id, data){
+  document.getElementById("head"+id).innerHTML = header();
+
+  let html = "";
+
+  data.forEach(r => {
+    html += `
+    <tr>
+      <td class="center">${r[0]}</td>
+      <td class="left">${r[1]}</td>
+      <td class="left">${r[2]}</td>
+      <td class="center">${r[3]}</td>
+      <td class="center">${r[4]}</td>
+      <td class="center">${r[5]}</td>
+      <td class="center os">${format(r[6])}</td>
+      <td class="center os">${format(r[7])}</td>
+      <td class="center os">${format(r[8])}</td>
+    </tr>`;
+  });
+
+  document.getElementById("data"+id).innerHTML = html;
+
+  autoScroll(id);
+}
+
+/* LOAD DATA */
+async function loadData(){
+  const res = await fetch(API_URL);
+  const result = await res.json();
+
+  document.getElementById("title1").innerText = result.title1;
+  document.getElementById("title2").innerText = result.title2;
+  document.getElementById("title3").innerText = result.title3;
+
+  render(1, result.meja1);
+  render(2, result.meja2);
+  render(3, result.meja3);
+}
+
+setInterval(loadData, 5000);
+loadData();
+
+/* AUTO SCROLL HALUS */
+function autoScroll(id){
+  const el = document.getElementById("wrap"+id);
+
+  if(el._scroll) cancelAnimationFrame(el._scroll);
+
+  let speed = 0.3; // bebas (0.3 – 1)
+  let pos = el.scrollTop; // 🔥 simpan posisi manual
+
+  function loop(){
+    pos += speed;
+    el.scrollTop = pos;
+
+    el.style.transform = 'translateZ(0)';
+
+    if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
+      setTimeout(()=>{
+        pos = 0;
+        el.scrollTop = 0;
+      }, 1500);
+    }
+
+    el._scroll = requestAnimationFrame(loop);
+  }
+
+  el._scroll = requestAnimationFrame(loop);
+}
+
+/* JAM REALTIME */
+function updateClock(){
+  const now = new Date();
+
+  const jam = now.toLocaleTimeString("id-ID");
+  const tanggal = now.toLocaleDateString("id-ID", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+
+  document.getElementById("clock").innerText = tanggal + " | " + jam;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+</script>
+
+</body>
+</html>
