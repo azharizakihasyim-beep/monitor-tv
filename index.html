@@ -7,73 +7,135 @@
 body{
   margin:0;
   font-family:Arial;
-  background:#f5f5f5;
-  color:#1f3a5f;
   overflow:hidden;
+  position:relative;
+  background:linear-gradient(135deg, #0f2027, #203a43, #2c5364);
 }
 
-/* HEADER ATAS */
+/* WATERMARK */
+body::before{
+  content:"";
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:95%;
+  height:95%;
+  background:url('LOGO ONLY.png') no-repeat center;
+  background-size:contain;
+  opacity:0.1;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* HEADER */
 .header-top{
+  height:80px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:10px 20px;
-  background:white;
-  border-bottom:2px solid #ccc;
+  padding:0 20px;
+  background:rgba(255,255,255,0.95);
+  position:relative;
+  z-index:2;
 }
 
-/* KIRI (LOGO + NOTE) */
 .header-left{
   display:flex;
-  align-items:center;
-  gap:20px;
+  flex-direction:column;
 }
 
-.logo{
-  height:100px;
-}
+.logo{ height:55px; }
 
 .note{
   color:red;
   font-weight:bold;
-  font-size:18px;
+  font-size:13px;
 }
 
-/* JAM */
-.clock{
+.header-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-weight:bold;
   font-size:20px;
+  width:100%;
+  text-align:center;
+}
+
+.clock-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+}
+
+.clock{
+  font-size:18px;
   font-weight:bold;
 }
 
-/* CONTAINER */
+.timer-circle{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#2c5364;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:16px;
+  margin-top:5px;
+}
+
+/* MAIN */
+.container-column{
+  height:calc(100vh - 80px);
+  display:flex;
+  flex-direction:column;
+}
+
 .container{
   display:flex;
-  gap:10px;
+  gap:12px;
   padding:10px;
-  height:calc(100vh - 80px);
+  height:50%;
 }
 
 /* PANEL */
 .panel{
   flex:1;
-  background:white;
-  border:2px solid #333;
+  background:rgba(255,255,255,0.93);
+  border-radius:14px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.25);
   display:flex;
   flex-direction:column;
+  overflow:hidden;
+  transition:0.3s;
 }
 
-/* TITLE */
+.panel:hover{
+  box-shadow:0 0 20px rgba(0,150,255,0.3);
+}
+
 .panel-title{
   text-align:center;
   font-weight:bold;
-  padding:10px;
-  font-size:16px;
+  padding:6px;
+  font-size:13px;
+  background:linear-gradient(90deg,#5a79a8,#3c5a7c);
+  color:white;
 }
 
-/* SCROLL */
 .wrap{
   flex:1;
-  overflow:auto;
+  overflow-y:auto;
+}
+
+.wrap::-webkit-scrollbar{width:6px;}
+.wrap::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,0.3);
+  border-radius:10px;
 }
 
 /* TABLE */
@@ -89,79 +151,73 @@ thead{
 }
 
 th, td{
-  border:1px solid #999;
-  padding:6px;
-  font-size:12px;
+  border:1px solid rgba(0,0,0,0.08);
+  padding:4px;
+  font-size:10px;
+  background:rgba(255,255,255,0.92);
 }
 
-th{
-  color:white;
-  text-align:center;
-}
+th{ color:white; }
 
-.blue{ background:#5a79a8; }
-.red{ background:#d92c2c; }
+.blue{ background:#5a79a8 !important; }
+.red{ background:#d92c2c !important; }
 
-.center{ text-align:center; }
-.left{ text-align:left; }
+.center{text-align:center;}
+.left{text-align:left;}
 
 .os{
   color:red;
   font-weight:bold;
+}
+
+tbody tr:hover{
+  background:rgba(0,0,0,0.04);
+  transition:0.2s;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header-top">
   <div class="header-left">
     <img src="HORIZONTAL.png" class="logo">
     <div class="note">HANYA YANG MASIH OS SAJA YANG MUNCUL DI LAYAR</div>
   </div>
 
-  <div class="clock" id="clock"></div>
+  <div class="header-center">
+    MONITORING OUTSTANDING PLAN LINE / WS 3B
+  </div>
+
+  <div class="clock-wrap">
+    <div class="clock" id="clock"></div>
+    <div class="timer-circle" id="timer">15</div>
+  </div>
 </div>
 
-<div class="container">
+<div class="container-column">
 
-  <div class="panel">
-    <div class="panel-title" id="title1"></div>
-    <div class="wrap" id="wrap1">
-      <table>
-        <thead id="head1"></thead>
-        <tbody id="data1"></tbody>
-      </table>
-    </div>
+  <div class="container">
+    <div class="panel"><div class="panel-title" id="title1"></div><div class="wrap" id="wrap1"><table><thead id="head1"></thead><tbody id="data1"></tbody></table></div></div>
+    <div class="panel"><div class="panel-title" id="title2"></div><div class="wrap" id="wrap2"><table><thead id="head2"></thead><tbody id="data2"></tbody></table></div></div>
+    <div class="panel"><div class="panel-title" id="title3"></div><div class="wrap" id="wrap3"><table><thead id="head3"></thead><tbody id="data3"></tbody></table></div></div>
   </div>
 
-  <div class="panel">
-    <div class="panel-title" id="title2"></div>
-    <div class="wrap" id="wrap2">
-      <table>
-        <thead id="head2"></thead>
-        <tbody id="data2"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title" id="title3"></div>
-    <div class="wrap" id="wrap3">
-      <table>
-        <thead id="head3"></thead>
-        <tbody id="data3"></tbody>
-      </table>
-    </div>
+  <div class="container">
+    <div class="panel"><div class="panel-title" id="title4"></div><div class="wrap" id="wrap4"><table><thead id="head4"></thead><tbody id="data4"></tbody></table></div></div>
+    <div class="panel"><div class="panel-title" id="title5"></div><div class="wrap" id="wrap5"><table><thead id="head5"></thead><tbody id="data5"></tbody></table></div></div>
+    <div class="panel"><div class="panel-title" id="title6"></div><div class="wrap" id="wrap6"><table><thead id="head6"></thead><tbody id="data6"></tbody></table></div></div>
   </div>
 
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyJStcyvPfvZa8-g8RyULzGrKy8O7uQ_qVvTQgaAI8SZZ1fdcj3OAzkY_K4ggT3m3r6/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwNp0RPSiV78MMPnMdhHQhQ8JJcWugWvWDDiC2W8eczeFKjJMxZcV68R9iFVGxxWYfB/exec";
 
-/* HEADER TABLE */
+const startedScroll = {};
+let dataReady = false;
+
+/* HEADER */
 function header(){
   return `
   <tr>
@@ -180,20 +236,17 @@ function header(){
   </tr>`;
 }
 
-/* FORMAT ANGKA */
 function format(x){
   if(!x) return "";
   return Number(x).toLocaleString("id-ID");
 }
 
-/* RENDER */
 function render(id, data){
   document.getElementById("head"+id).innerHTML = header();
 
-  let html = "";
-
-  data.forEach(r => {
-    html += `
+  let html="";
+  data.forEach(r=>{
+    html+=`
     <tr>
       <td class="center">${r[0]}</td>
       <td class="left">${r[1]}</td>
@@ -209,92 +262,82 @@ function render(id, data){
 
   document.getElementById("data"+id).innerHTML = html;
 
-  autoScroll(id);
+  if(!startedScroll[id]){
+    autoScroll(id);
+    startedScroll[id]=true;
+  }
 }
 
-/* LOAD DATA */
+/* LOAD DATA SUPER CEPAT */
 async function loadData(){
-  const res = await fetch(API_URL);
+  dataReady = false;
+
+  const res = await fetch(API_URL + "?t=" + new Date().getTime(), {
+    cache: "no-store"
+  });
+
   const result = await res.json();
 
-  document.getElementById("title1").innerText = result.title1;
-  document.getElementById("title2").innerText = result.title2;
-  document.getElementById("title3").innerText = result.title3;
+  for(let i=1;i<=6;i++){
+    document.getElementById("title"+i).innerText = result["title"+i] || "";
+    render(i, result["meja"+i] || []);
+  }
 
-  render(1, result.meja1);
-  render(2, result.meja2);
-  render(3, result.meja3);
+  dataReady = true;
+
+  // reset timer saat data sudah ready
+  timeLeft = duration;
 }
 
 setInterval(loadData, 5000);
 loadData();
 
-/* AUTO SCROLL HALUS */
+/* AUTO SCROLL */
 function autoScroll(id){
-  const el = document.getElementById("wrap"+id);
+  const el=document.getElementById("wrap"+id);
 
-  let speed = 0.5;
-  let pos = el.scrollTop;
+  let pause=false;
 
-  let isUserScrolling = false;
-  let isAutoScrolling = false;
-  let scrollTimeout;
+  el.addEventListener("mouseenter",()=>pause=true);
+  el.addEventListener("mouseleave",()=>pause=false);
 
-  function loop(){
-    if(!isUserScrolling){
-      pos += speed;
+  setInterval(()=>{
+    if(pause) return;
 
-      isAutoScrolling = true;
-      el.scrollTop = pos;
-      isAutoScrolling = false;
+    el.scrollTop+=1;
 
-      if(el.scrollTop + el.clientHeight >= el.scrollHeight - 1){
-        setTimeout(()=>{
-          pos = 0;
-          el.scrollTop = 0;
-        }, 1500);
-      }
+    if(el.scrollTop+el.clientHeight>=el.scrollHeight){
+      el.scrollTop=0;
     }
+
+  },30);
+}
+
+/* CLOCK */
+function updateClock(){
+  const now=new Date();
+  const jam=now.toLocaleTimeString("id-ID");
+  const tanggal=now.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+  document.getElementById("clock").innerText=tanggal+" | "+jam;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* TIMER SYNC */
+let duration = 15;
+let timeLeft = duration;
+
+setInterval(()=>{
+  if(!dataReady) return;
+
+  timeLeft--;
+  document.getElementById("timer").innerText = timeLeft;
+
+  if(timeLeft <= 0){
+    location.reload();
   }
 
-  // 🔥 Pakai setInterval biar HP aman
-  setInterval(loop, 16); // ~60fps
-
-  // 🔥 Deteksi user scroll
-  el.addEventListener("scroll", () => {
-    if(isAutoScrolling) return;
-
-    isUserScrolling = true;
-    pos = el.scrollTop;
-
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      isUserScrolling = false;
-    }, 1500);
-  });
-
-  // 🔥 WAJIB: trigger setelah user sentuh layar
-  document.addEventListener("touchstart", () => {
-    pos = el.scrollTop;
-  }, { once: true });
-}
-
-/* JAM REALTIME */
-function updateClock(){
-  const now = new Date();
-
-  const jam = now.toLocaleTimeString("id-ID");
-  const tanggal = now.toLocaleDateString("id-ID", {
-    day:"2-digit",
-    month:"short",
-    year:"numeric"
-  });
-
-  document.getElementById("clock").innerText = tanggal + " | " + jam;
-}
-
-setInterval(updateClock, 1000);
-updateClock();
+},1000);
 
 </script>
 
